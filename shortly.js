@@ -15,6 +15,7 @@ var app = express();
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
+
 app.use(partials());
 // Parse JSON (uniform resource locators)
 app.use(bodyParser.json());
@@ -40,10 +41,22 @@ function(req, res) {
   });
 });
 
+app.get('/login',
+  function(req, res) {
+    res.render('login');
+});
+
+app.post('/login',
+  function(req, res){
+    // if the username matches the result found in the tablename AND the password matches 
+  });
+
+
 app.post('/links', 
 function(req, res) {
   var uri = req.body.url;
-
+  res.render('links');
+  
   if (!util.isValidUrl(uri)) {
     console.log('Not a valid url: ', uri);
     return res.send(404);
