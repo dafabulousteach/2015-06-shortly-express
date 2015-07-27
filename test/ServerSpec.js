@@ -22,7 +22,7 @@ var Link = require('../app/models/link');
 // rows of asterisks below. If you do, you will be overwriting
 // the actual beforeEach, which we want to work!
 /************************************************************/
-var xbeforeEach = function(){};
+var beforeEach = function(){};
 /************************************************************/
 
 
@@ -72,7 +72,7 @@ describe('', function() {
 
     var requestWithSession = request.defaults({jar: true});
 
-    xbeforeEach(function(done){      // create a user that we can then log-in with
+    beforeEach(function(done){      // create a user that we can then log-in with
       new User({
           'username': 'Phillip',
           'password': 'Phillip'
