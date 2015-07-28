@@ -276,7 +276,7 @@ describe('', function() {
       });
     });
 
-    xit('Signup logs in a new user', function(done) {
+    it('Signup logs in a new user', function(done) {
       var options = {
         'method': 'POST',
         'uri': 'http://127.0.0.1:4568/signup',
@@ -307,7 +307,7 @@ describe('', function() {
       });
     })
 
-    xit('Logs in existing users', function(done) {
+    it('Logs in existing users', function(done) {
       var options = {
         'method': 'POST',
         'uri': 'http://127.0.0.1:4568/login',

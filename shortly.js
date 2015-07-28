@@ -53,11 +53,12 @@ app.get('/signup',
 
 app.post('/signup',
   function(req, res){
-    var user = new User;
-    user.set({ username: req.body.username, password : req.body.password});
-    res.redirect('/links');
-    res.send(200, user.models);
+    var user = new User({username: req.body.username, password: req.body.password});
+    user.save().then(function(newUser){
+      res.redirect('/');
+      res.send(200, user);
     });
+  });
 
 app.post('/login',
   function(req, res){
