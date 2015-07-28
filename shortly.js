@@ -2,15 +2,12 @@ var express = require('express');
 var util = require('./lib/utility');
 var partials = require('express-partials');
 var bodyParser = require('body-parser');
-
-
 var db = require('./app/config');
 var Users = require('./app/collections/users');
 var User = require('./app/models/user');
 var Links = require('./app/collections/links');
 var Link = require('./app/models/link');
 var Click = require('./app/models/click');
-
 var app = express();
 
 app.set('views', __dirname + '/views');
@@ -22,7 +19,6 @@ app.use(bodyParser.json());
 // Parse forms (signup/login)
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
-
 
 app.get('/', 
 function(req, res) {
@@ -56,14 +52,21 @@ app.post('/signup',
     var user = new User({username: req.body.username, password: req.body.password});
     user.save().then(function(newUser){
       res.redirect('/');
-      res.send(200, user);
     });
   });
 
 app.post('/login',
   function(req, res){
-    res.redirect('/');
-});
+    new User({username: req.body.username, password: req.body.password})
+    .fetch()
+    .then(function(model){
+      if(model){
+        res.redirect('/');   
+      } else{
+        res.redirect('/login');
+      }
+    });
+  });
 
 app.post('/links', 
 function(req, res) { 
