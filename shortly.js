@@ -46,6 +46,18 @@ app.get('/login',
     res.render('login');
 });
 
+app.get('/signup', 
+  function(req, res){
+    res.render('signup');
+});
+
+app.post('/signup',
+  function(req, res){
+    var user = new User;
+    user.set({ username: req.body.username, password : req.body.password});
+    res.redirect('/links');
+    res.send(200, user.models);
+    });
 
 app.post('/login',
   function(req, res){
