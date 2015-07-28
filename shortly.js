@@ -46,17 +46,15 @@ app.get('/login',
     res.render('login');
 });
 
+
 app.post('/login',
   function(req, res){
-    // if the username matches the result found in the tablename AND the password matches 
-  });
-
+    res.redirect('/links');
+});
 
 app.post('/links', 
-function(req, res) {
+function(req, res) { 
   var uri = req.body.url;
-  res.render('links');
-  
   if (!util.isValidUrl(uri)) {
     console.log('Not a valid url: ', uri);
     return res.send(404);
