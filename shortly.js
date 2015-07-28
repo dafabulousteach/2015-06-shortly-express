@@ -62,7 +62,7 @@ app.post('/signup',
 
 app.post('/login',
   function(req, res){
-    res.redirect('/links');
+    res.redirect('/');
 });
 
 app.post('/links', 
