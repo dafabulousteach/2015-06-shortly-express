@@ -8,38 +8,40 @@ var User = require('./app/models/user');
 var Links = require('./app/collections/links');
 var Link = require('./app/models/link');
 var Click = require('./app/models/click');
+var session = require('express-session');
 var app = express();
+var bcrypt = require('bcrypt-nodejs');
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
 app.use(partials());
+app.use(session({secret : 'secret key word',
+                 resave : false,
+                 saveUninitialized: true
+}));
+
 // Parse JSON (uniform resource locators)
 app.use(bodyParser.json());
 // Parse forms (signup/login)
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
 
-app.get('/', 
+app.get('/', util.checkUser,
 function(req, res) {
   res.render('index');
 });
 
-app.get('/create', 
+app.get('/create', util.checkUser,
 function(req, res) {
   res.render('index');
 });
 
-app.get('/links', 
+app.get('/links', util.checkUser,
 function(req, res) {
   Links.reset().fetch().then(function(links) {
     res.send(200, links.models);
   });
-});
-
-app.get('/login',
-  function(req, res) {
-    res.render('login');
 });
 
 app.get('/signup', 
@@ -55,20 +57,8 @@ app.post('/signup',
     });
   });
 
-app.post('/login',
-  function(req, res){
-    new User({username: req.body.username, password: req.body.password})
-    .fetch()
-    .then(function(model){
-      if(model){
-        res.redirect('/');   
-      } else{
-        res.redirect('/login');
-      }
-    });
-  });
 
-app.post('/links', 
+app.post('/links', util.checkUser,
 function(req, res) { 
   var uri = req.body.url;
   if (!util.isValidUrl(uri)) {
@@ -76,7 +66,7 @@ function(req, res) {
     return res.send(404);
   }
 
-  new Link({ url: uri }).fetch().then(function(found) {
+  new Link({url: uri}).fetch().then(function(found) {
     if (found) {
       res.send(200, found.attributes);
     } else {
@@ -105,8 +95,29 @@ function(req, res) {
 // Write your dedicated authentication routes here
 // e.g. login, logout, etc.
 /************************************************************/
+app.get('/login',
+  function(req, res) {
+    res.render('login');
+});
 
+app.post('/login',
+  function(req, res){
+    new User({username: req.body.username, password: req.body.password})
+    .fetch()
+    .then(function(user){
+      if(user){
+        util.createSession(req, res, user);   
+      } else{
+        res.redirect('/login');
+      }
+    });
+  });
 
+app.get('/logout', function(req, res){
+  req.session.destroy(function(){
+    res.redirect('/login');
+  });
+});
 
 /************************************************************/
 // Handle the wildcard route last - if all other routes fail
